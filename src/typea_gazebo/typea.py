@@ -8,12 +8,12 @@ from sensor_msgs.msg import JointState
 from geometry_msgs.msg import Twist
 
 
-class Darwin:
+class TypeA:
     """
-    Client ROS class for manipulating Darwin OP in Gazebo
+    Client ROS class for manipulating biloid TypeA in Gazebo
     """
     
-    def __init__(self,ns="/darwin/"):
+    def __init__(self,ns="/typea/"):
         self.ns=ns
         self.joints=None
         self.angles=None
@@ -30,12 +30,12 @@ class Darwin:
         rospy.loginfo("Creating joint command publishers")
         self._pub_joints={}
         for j in self.joints:
-            p=rospy.Publisher(self.ns+j+"_position_controller/command",Float64)
+            p=rospy.Publisher(self.ns+j+"_position_controller/command",Float64, queue_size=10)
             self._pub_joints[j]=p
         
         rospy.sleep(1)
         
-        self._pub_cmd_vel=rospy.Publisher(ns+"cmd_vel",Twist)
+        self._pub_cmd_vel=rospy.Publisher(ns+"cmd_vel",Twist, queue_size=10)
         
 
     def set_walk_velocity(self,x,y,t):
