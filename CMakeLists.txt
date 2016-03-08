@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(darwin_gazebo)
+project(bioloid_typea_gazebo)
 
 # Load catkin and all dependencies required for this package
 find_package(catkin REQUIRED COMPONENTS 

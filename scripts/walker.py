@@ -3,7 +3,7 @@
 from threading import Thread
 import rospy
 import math
-from darwin_gazebo.darwin import Darwin
+from typea_gazebo.typea import TypeA
 from geometry_msgs.msg import Twist
 
 
@@ -42,7 +42,7 @@ class WJFunc:
         
 class WFunc:
     """
-    Multi-joint walk function for Darwin    
+    Multi-joint walk function for TypeA
     """
     def __init__(self,**kwargs):
         self.parameters={}
@@ -72,45 +72,45 @@ class WFunc:
         f1=WJFunc()
         f1.in_scale=math.pi
         f1.scale=-self.parameters["swing_scale"]
-        self.pfn["j_ankle2_l"]=f1
-        self.pfn["j_thigh1_l"]=f1
+        self.pfn["l_ankle_lateral_joint"]=f1
+        self.pfn["l_hip_lateral_joint"]=f1
         
         # f2=mirror f1 in antiphase
         f2=f1.mirror()
         #~ f2=WJFunc()
-        self.afn["j_ankle2_l"]=f2
-        self.afn["j_thigh1_l"]=f2
+        self.afn["l_ankle_lateral_joint"]=f2
+        self.afn["l_hip_lateral_joint"]=f2
 
         f3=WJFunc()
         f3.in_scale=math.pi
         f3.scale=self.parameters["step_scale"]
         f3.offset=self.parameters["step_offset"]
-        self.pfn["j_thigh2_l"]=f3
+        self.pfn["l_hip_swing_joint"]=f3
         f33=f3.mirror()
         f33.offset+=self.parameters["ankle_offset"]
-        self.pfn["j_ankle1_l"]=f33
+        self.pfn["l_ankle_swing_joint"]=f33
         
         f4=f3.mirror()
         f4.offset*=2
         f4.scale*=2
-        self.pfn["j_tibia_l"]=f4
+        self.pfn["l_knee_joint"]=f4
         
         s2=0
         f5=f3.clone()
         f5.in_scale*=2
         f5.scale=s2
-        self.afn["j_thigh2_l"]=f5
+        self.afn["l_hip_swing_joint"]=f5
         
         
         f6=f3.mirror()
         f6.in_scale*=2
         f6.scale=f5.scale
         f6.offset+=self.parameters["ankle_offset"]
-        self.afn["j_ankle1_l"]=f6
+        self.afn["l_ankle_swing_joint"]=f6
         
         f7=f4.clone()
         f7.scale=0
-        self.afn["j_tibia_l"]=f7
+        self.afn["l_knee_joint"]=f7
 
         
         self.forward=[f5,f6]
@@ -124,10 +124,10 @@ class WFunc:
         """
         Mirror CPG functions from left to right and antiphase right
         """
-        l=[ v[:-2] for v in self.pfn.keys()]
+        l=[ v[2:] for v in self.pfn.keys()]
         for j in l:
-            self.pfn[j+"_r"]=self.afn[j+"_l"].mirror()
-            self.afn[j+"_r"]=self.pfn[j+"_l"].mirror()
+            self.pfn["r_"+j]=self.afn["l_"+j].mirror()
+            self.afn["r_"+j]=self.pfn["l_"+j].mirror()
         
     def get(self,phase,x,velocity):
         """ Obtain the joint angles for a given phase, position in cycle (x 0,1)) and velocity parameters """
@@ -136,8 +136,12 @@ class WFunc:
             if phase:
                 v=self.pfn[j].get(x)
                 angles[j]=v
+                if angles[j]:
+                    print j,"p angle: ",angles[j]
             else:
                 angles[j]=self.afn[j].get(x)
+                if angles[j]:
+                    print j,"a angle: ",angles[j]
         self.apply_velocity(angles,velocity,phase,x)
         return angles
             
@@ -159,15 +163,15 @@ class WFunc:
         v=velocity[0]*self.parameters["vx_scale"]
         d=(x*2-1)*v
         if phase:
-            angles["j_thigh2_l"]+=d
-            angles["j_ankle1_l"]+=d
-            angles["j_thigh2_r"]+=d
-            angles["j_ankle1_r"]+=d
+            angles["l_hip_swing_joint"]+=d
+            angles["l_ankle_swing_joint"]+=d
+            angles["r_hip_swing_joint"]+=d
+            angles["r_ankle_swing_joint"]+=d
         else:
-            angles["j_thigh2_l"]-=d
-            angles["j_ankle1_l"]-=d
-            angles["j_thigh2_r"]-=d
-            angles["j_ankle1_r"]-=d
+            angles["l_hip_swing_joint"]-=d
+            angles["l_ankle_swing_joint"]-=d
+            angles["r_hip_swing_joint"]-=d
+            angles["r_ankle_swing_joint"]-=d
 
         # VY
         v=velocity[1]*self.parameters["vy_scale"]
@@ -175,26 +179,26 @@ class WFunc:
         d2=(1-x)*v
         if v>=0:
             if phase:
-                angles["j_thigh1_l"]-=d
-                angles["j_ankle2_l"]-=d
-                angles["j_thigh1_r"]+=d
-                angles["j_ankle2_r"]+=d
+                angles["l_hip_lateral_joint"]-=d
+                angles["l_ankle_lateral_joint"]-=d
+                angles["r_hip_lateral_joint"]+=d
+                angles["r_ankle_lateral_joint"]+=d
             else:
-                angles["j_thigh1_l"]-=d2
-                angles["j_ankle2_l"]-=d2
-                angles["j_thigh1_r"]+=d2
-                angles["j_ankle2_r"]+=d2
+                angles["l_hip_lateral_joint"]-=d2
+                angles["l_ankle_lateral_joint"]-=d2
+                angles["r_hip_lateral_joint"]+=d2
+                angles["r_ankle_lateral_joint"]+=d2
         else:
             if phase:
-                angles["j_thigh1_l"]+=d2
-                angles["j_ankle2_l"]+=d2
-                angles["j_thigh1_r"]-=d2
-                angles["j_ankle2_r"]-=d2
+                angles["l_hip_lateral_joint"]+=d2
+                angles["l_ankle_lateral_joint"]+=d2
+                angles["r_hip_lateral_joint"]-=d2
+                angles["r_ankle_lateral_joint"]-=d2
             else:
-                angles["j_thigh1_l"]+=d
-                angles["j_ankle2_l"]+=d
-                angles["j_thigh1_r"]-=d
-                angles["j_ankle2_r"]-=d
+                angles["l_hip_lateral_joint"]+=d
+                angles["l_ankle_lateral_joint"]+=d
+                angles["r_hip_lateral_joint"]-=d
+                angles["r_ankle_lateral_joint"]-=d
                 
         # VT
         v=velocity[2]*self.parameters["vt_scale"]
@@ -202,27 +206,31 @@ class WFunc:
         d2=(1-x)*v
         if v>=0:
             if phase:
-                angles["j_pelvis_l"]=-d
-                angles["j_pelvis_r"]=d
+                angles["l_hip_twist_joint"]=-d
+                angles["r_hip_twist_joint"]=d
             else:
-                angles["j_pelvis_l"]=-d2
-                angles["j_pelvis_r"]=d2
+                angles["l_hip_twist_joint"]=-d2
+                angles["r_hip_twist_joint"]=d2
         else:
             if phase:
-                angles["j_pelvis_l"]=d2
-                angles["j_pelvis_r"]=-d2
+                angles["l_hip_twist_joint"]=d2
+                angles["r_hip_twist_joint"]=-d2
             else:
-                angles["j_pelvis_l"]=d
-                angles["j_pelvis_r"]=-d
-
+                angles["l_hip_twist_joint"]=d
+                angles["r_hip_twist_joint"]=-d
+                
+        # Print
+        for j in angles.keys():
+            if angles[j]:
+                print j,"angles: ",angles[j]
 
 
 class Walker:
     """
-    Class for making Darwin walk
+    Class for making TypeA walk
     """
-    def __init__(self,darwin):
-        self.darwin=darwin
+    def __init__(self,typea):
+        self.typea=typea
         self.running=False
 
         self.velocity=[0,0,0]
@@ -234,7 +242,7 @@ class Walker:
         
         self._th_walk=None
 
-        self._sub_cmd_vel=rospy.Subscriber(darwin.ns+"cmd_vel",Twist,self._cb_cmd_vel,queue_size=1)
+        self._sub_cmd_vel=rospy.Subscriber(typea.ns+"cmd_vel",Twist,self._cb_cmd_vel,queue_size=1)
 
 
     def _cb_cmd_vel(self,msg):
@@ -254,7 +262,8 @@ class Walker:
         """
         rospy.loginfo("Going to walk position")
         if self.get_dist_to_ready()>0.02:                    
-            self.darwin.set_angles_slow(self.ready_pos)        
+            self.typea.set_angles_slow(self.ready_pos)
+            rospy.loginfo("Done")
 
     def start(self):
         if not self.running:
@@ -289,6 +298,7 @@ class Walker:
         n=50
         p=True
         i=0
+        l=0
         self.current_velocity=[0,0,0]
         while not rospy.is_shutdown() and (self.walking or i<n or self.is_walking()):
             if not self.walking:
@@ -297,11 +307,13 @@ class Walker:
                 self.update_velocity(self.velocity,n)
                 r.sleep()
                 continue
+            rospy.loginfo("|i=%d|p:%d|l=%d",i, p, l/100)
             x=float(i)/n            
             angles=func.get(p,x,self.current_velocity)
             self.update_velocity(self.velocity,n)
-            self.darwin.set_angles(angles)
+            self.typea.set_angles(angles)
             i+=1
+            l+=1
             if i>n:
                 i=0
                 p=not p
@@ -333,7 +345,7 @@ class Walker:
         self.current_velocity=[a*t+b*v for (t,v) in zip(target,self.current_velocity)]
         
     def get_dist_to_ready(self):
-        angles=self.darwin.get_angles()
+        angles=self.typea.get_angles()
         return get_distance(self.ready_pos,angles)
             
                 
@@ -359,11 +371,11 @@ if __name__=="__main__":
     rospy.init_node("walker")
     rospy.sleep(1)
     
-    rospy.loginfo("Instantiating Darwin Client")
-    darwin=Darwin()
-    rospy.loginfo("Instantiating Darwin Walker")
-    walker=Walker(darwin)
+    rospy.loginfo("Instantiating TypeA Client")
+    typea=TypeA()
+    rospy.loginfo("Instantiating TypeA Walker")
+    walker=Walker(typea)
  
-    rospy.loginfo("Darwin Walker Ready")
+    rospy.loginfo("TypeA Walker Ready")
     while not rospy.is_shutdown():
         rospy.sleep(1)

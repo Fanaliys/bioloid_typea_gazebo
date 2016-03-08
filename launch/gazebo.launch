@@ -1,0 +1,16 @@
+<launch>
+
+  <param name="robot_description" textfile="$(find bioloid_typea_description)/typea.urdf" />
+
+  <include file="$(find gazebo_ros)/launch/empty_world.launch">
+    <arg name="world_name" value="worlds/empty.world"/>
+    <arg name="paused" value="true"/>
+  </include>
+  
+  <node name="spawn_urdf" pkg="gazebo_ros" type="spawn_model" args="-file $(find bioloid_typea_description)/typea.urdf -urdf -model typea -z 0.3" />
+
+  <include file="$(find bioloid_typea_control)/launch/control.launch"/>
+
+  <node name="typea_walker" pkg="bioloid_typea_gazebo" type="walker.py" output="screen"/>
+
+</launch>

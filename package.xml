@@ -1,30 +1,30 @@
 <?xml version="1.0"?>
 <package>
-  <name>darwin_gazebo</name>
+  <name>bioloid_typea_gazebo</name>
   <version>0.1.0</version>
-  <description>Provides Gazebo launch files to expose Darwin model in ROS</description>
+  <description>Provides Gazebo launch files to expose bioloid premium kit type A model in ROS</description>
 
-  <maintainer email="pc@humarobotics.com">Philippe Capdepuy</maintainer>
-
+  <maintainer email="mathieu.rondonneau@gmail.com">Mathieu Rondonneau</maintainer>
 
   <license>BSD</license>
-  <url type="website">http://wiki.ros.org/darwin_gazebo</url>
+  <!-- Original code from https://github.com/HumaRobotics/darwin_gazebo.git -->
 
-
+  <!-- Initial author: -->
   <author email="pc@humarobotics.com">Philippe Capdepuy</author>
-
+  <!-- Updated scripts to fit the need of this project and log angles: -->
+  <author email="mathieu.rondonneau@gmail.com">Mathieu Rondonneau</author>
 
   <buildtool_depend>catkin</buildtool_depend>
   <build_depend>gazebo_ros</build_depend>
   <build_depend>rospy</build_depend>
   <build_depend>gazebo_ros_control</build_depend>
   <build_depend>sensor_msgs</build_depend>
-  
+
   <run_depend>gazebo_ros</run_depend>
   <run_depend>rospy</run_depend>
   <run_depend>gazebo_ros_control</run_depend>
   <run_depend>sensor_msgs</run_depend>
-  <run_depend>darwin_description</run_depend>
+  <run_depend>bioloid_typea_description</run_depend>
   <run_depend>hector_gazebo_plugins</run_depend>
 
 
