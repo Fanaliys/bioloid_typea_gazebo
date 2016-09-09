@@ -19,24 +19,25 @@ class TypeA:
         self.angles=None
         
         self._sub_joints=rospy.Subscriber(ns+"joint_states",JointState,self._cb_joints,queue_size=1)
-        rospy.loginfo("Waiting for joints to be populated...")
+        rospy.loginfo("+Waiting for joints to be populated...")
         while not rospy.is_shutdown():
             if self.joints is not None: break
             rospy.sleep(0.1)            
-            rospy.loginfo("Waiting for joints to be populated...")
-        rospy.loginfo("Joints populated")
+        rospy.loginfo(" -Joints populated: "+str(len(self.joints)))
         
         
-        rospy.loginfo("Creating joint command publishers")
+        rospy.loginfo("+Creating joint command publishers...")
         self._pub_joints={}
         for j in self.joints:
             p=rospy.Publisher(self.ns+j+"_position_controller/command",Float64, queue_size=10)
             self._pub_joints[j]=p
+            rospy.loginfo(" -Found: "+j)
         
         rospy.sleep(1)
         
-        self._pub_cmd_vel=rospy.Publisher(ns+"cmd_vel",Twist, queue_size=10)
         
+        self._pub_cmd_vel=rospy.Publisher(ns+"cmd_vel",Twist, queue_size=10)
+        rospy.loginfo("TypeA init done.")
 
     def set_walk_velocity(self,x,y,t):
         msg=Twist()

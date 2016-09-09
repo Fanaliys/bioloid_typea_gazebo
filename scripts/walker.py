@@ -90,15 +90,15 @@ class WFunc:
         f33.offset+=self.parameters["ankle_offset"]
         self.pfn["l_ankle_swing_joint"]=f33
         
-        f4=f3.mirror()
+        #f4=f3.mirror()
+        f4=f3.clone()
         f4.offset*=2
         f4.scale*=2
         self.pfn["l_knee_joint"]=f4
         
-        s2=0
         f5=f3.clone()
         f5.in_scale*=2
-        f5.scale=s2
+        f5.scale=0
         self.afn["l_hip_swing_joint"]=f5
         
         
@@ -136,12 +136,12 @@ class WFunc:
             if phase:
                 v=self.pfn[j].get(x)
                 angles[j]=v
-                if angles[j]:
-                    print j,"p angle: ",angles[j]
+                #if angles[j]:
+                #    print j,"p angle: ",angles[j]
             else:
                 angles[j]=self.afn[j].get(x)
-                if angles[j]:
-                    print j,"a angle: ",angles[j]
+                #if angles[j]:
+                #    print j,"a angle: ",angles[j]
         self.apply_velocity(angles,velocity,phase,x)
         return angles
             
@@ -220,9 +220,9 @@ class WFunc:
                 angles["r_hip_twist_joint"]=-d
                 
         # Print
-        for j in angles.keys():
-            if angles[j]:
-                print j,"angles: ",angles[j]
+        #for j in angles.keys():
+        #    if angles[j]:
+        #        print j,"angles: ",angles[j]
 
 
 class Walker:

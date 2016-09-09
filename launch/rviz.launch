@@ -1,0 +1,10 @@
+<launch>
+
+  <param name="robot_description"
+    command="$(find xacro)/xacro --inorder '$(find bioloid_typea_description)/typea.xacro'" />
+
+  <include file="$(find ros_control_boilerplate)/bioloid_control/launch/bioloid_simulation.launch"/>
+
+  <node name="typea_walker" pkg="bioloid_typea_gazebo" type="walker.py" output="screen"/>
+
+</launch>
