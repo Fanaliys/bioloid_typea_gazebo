@@ -90,8 +90,8 @@ class WFunc:
         f33.offset+=self.parameters["ankle_offset"]
         self.pfn["l_ankle_swing_joint"]=f33
         
-        #f4=f3.mirror()
-        f4=f3.clone()
+        f4=f3.mirror()
+        #f4=f3.clone()
         f4.offset*=2
         f4.scale*=2
         self.pfn["l_knee_joint"]=f4

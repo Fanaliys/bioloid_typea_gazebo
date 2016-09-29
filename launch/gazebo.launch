@@ -1,6 +1,5 @@
 <launch>
 
-  <!-- <param name="robot_description" textfile="$(find bioloid_typea_description)/typea.urdf" /> -->
   <param name="robot_description"
     command="$(find xacro)/xacro --inorder '$(find bioloid_typea_description)/typea.xacro'" />
 
