@@ -47,7 +47,7 @@ class WFunc:
     def __init__(self,**kwargs):
         self.parameters={}
 
-        self.parameters["swing_scale"]=0
+        self.parameters["swing_scale"]=0.2
         self.parameters["step_scale"]=0.3
         self.parameters["step_offset"]=0.55
         self.parameters["ankle_offset"]=0
@@ -290,7 +290,8 @@ class Walker:
         """
         Main walking loop, smoothly update velocity vectors and apply corresponding angles
         """
-        r=rospy.Rate(100)
+        increment=1
+        r=rospy.Rate(10)
         rospy.loginfo("Started walking thread")
         func=self.func
         
@@ -299,6 +300,7 @@ class Walker:
         p=True
         i=0
         l=0
+
         self.current_velocity=[0,0,0]
         while not rospy.is_shutdown() and (self.walking or i<n or self.is_walking()):
             if not self.walking:
@@ -307,13 +309,13 @@ class Walker:
                 self.update_velocity(self.velocity,n)
                 r.sleep()
                 continue
-            rospy.loginfo("|i=%d|p:%d|l=%d",i, p, l/100)
+            # rospy.loginfo("|i=%d|p:%d|l=%d",i, p, l/100)
             x=float(i)/n            
             angles=func.get(p,x,self.current_velocity)
             self.update_velocity(self.velocity,n)
             self.typea.set_angles(angles)
-            i+=1
-            l+=1
+            i+=increment
+            l+=increment
             if i>n:
                 i=0
                 p=not p
