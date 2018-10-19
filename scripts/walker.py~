@@ -134,8 +134,8 @@ class WFunc:
 	if phase:
 		angles["l_hip_swing_joint"] = self.pfn["l_hip_swing_joint"].get(x)
 		angles["r_hip_swing_joint"] = self.pfn["r_hip_swing_joint"].get(x)
-		angles["l_hip_lateral_joint"] = -self.pfn["l_hip_lateral_joint"].get(x)
-		angles["r_hip_lateral_joint"] = -self.pfn["r_hip_lateral_joint"].get(x)
+		angles["l_hip_lateral_joint"] = self.pfn["l_hip_lateral_joint"].get(x)
+		angles["r_hip_lateral_joint"] = self.pfn["r_hip_lateral_joint"].get(x)
 		angles["l_knee_joint"] = -self.pfn["l_knee_joint"].get(x)
 		angles["r_knee_joint"] = -self.pfn["r_knee_joint"].get(x)
 		angles["l_ankle_swing_joint"] = self.pfn["l_ankle_swing_joint"].get(x)
@@ -145,8 +145,8 @@ class WFunc:
 	else:
 		angles["l_hip_swing_joint"] = self.afn["l_hip_swing_joint"].get(x)
 		angles["r_hip_swing_joint"] = self.afn["r_hip_swing_joint"].get(x)
-		angles["l_hip_lateral_joint"] = -self.afn["l_hip_lateral_joint"].get(x)
-		angles["r_hip_lateral_joint"] = -self.afn["r_hip_lateral_joint"].get(x)
+		angles["l_hip_lateral_joint"] = self.afn["l_hip_lateral_joint"].get(x)
+		angles["r_hip_lateral_joint"] = self.afn["r_hip_lateral_joint"].get(x)
 		angles["l_knee_joint"] = -self.afn["l_knee_joint"].get(x)
 		angles["r_knee_joint"] = -self.afn["r_knee_joint"].get(x)
 		angles["l_ankle_swing_joint"] = self.afn["l_ankle_swing_joint"].get(x)
@@ -314,7 +314,7 @@ class Walker:
         """
         Main walking loop, smoothly update velocity vectors and apply corresponding angles
         """
-        r=rospy.Rate(25)
+        r=rospy.Rate(50)
         rospy.loginfo("Started walking thread")
         func=self.func
         

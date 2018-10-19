@@ -11,6 +11,6 @@
 
   <include file="$(find bioloid_control)/launch/bioloid_control.launch"/>
 
-  <node name="typea_walker" pkg="bioloid_typea_gazebo" type="walker.py" output="screen"/>
+  <node name="typea_walker" pkg="bioloid_typea_gazebo" type="walker.py"/>
 
 </launch>

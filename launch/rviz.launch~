@@ -8,7 +8,7 @@
   <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher">
     <param name="use_gui" value="TRUE"/>
   </node>
-  <node name="robot_state_publisher1" pkg="robot_state_publisher" type="robot_state_publisher"/>
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"/>
   <node if="$(arg noimu)" pkg="tf" type="static_transform_publisher" name="dummy_imu_frame_broadcaster" args="0 0 0 0 0 0 odom imu_link 1000"/>
 
   <include file="$(find bioloid_control)/launch/bioloid_control.launch"/>

@@ -30,7 +30,7 @@ class TypeA:
         rospy.loginfo("Creating joint command publishers")
         self._pub_joints={}
         for j in self.joints:
-            p=rospy.Publisher(self.ns+j+"_position_controller/command",Float64)
+            p=rospy.Publisher(self.ns+j+"_joint_controller/command",Float64)
             self._pub_joints[j]=p
         
         rospy.sleep(1)
